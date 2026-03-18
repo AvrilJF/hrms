@@ -33,13 +33,10 @@ public interface EmployeeMapper extends BaseMapper<Employee> {
             "FROM employee WHERE status != 3")
     Map<String, Integer> getAgeDistribution();
 
-    // 状态分布
-    @Select("SELECT " +
-            "SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as onDuty, " +
-            "SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) as probation, " +
-            "SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) as leave " +
-            "FROM employee")
-    Map<String, Integer> getStatusDistribution();
+    //    // 状态分布
+    @Select("SELECT status FROM employee WHERE status != 3")
+    List<Map<String, Object>> getEmployeeStatusData();
+
 
     // 部门薪资分布
     @Select("SELECT d.dept_name as deptName, " +
@@ -49,32 +46,14 @@ public interface EmployeeMapper extends BaseMapper<Employee> {
             "WHERE e.status != 3 GROUP BY d.dept_name")
     List<Map<String, Object>> getDeptSalaryDistribution();
 
-    // 入离职趋势
-    @Select("SELECT DATE_FORMAT(entry_time, '%m月') as month, COUNT(id) as entryCount " +
-            "FROM employee WHERE entry_time IS NOT NULL AND entry_time LIKE #{time} GROUP BY DATE_FORMAT(entry_time, '%m月') " +
-            "UNION ALL " +
-            "SELECT DATE_FORMAT(leave_time, '%m月') as month, COUNT(id) as leaveCount " +
-            "FROM employee WHERE leave_time IS NOT NULL AND leave_time LIKE #{time} GROUP BY DATE_FORMAT(leave_time, '%m月')")
-    List<Map<String, Object>> getEntryLeaveTrend(@Param("time") String time);
+//    // 入离职趋势
+    @Select("SELECT month, entry_count, leave_count FROM v_entry_leave_trend")
+    List<Map<String, Object>> getEntryLeaveTrendData();
 
-    // 员工统计
-//    @Select("SELECT " +
-//            "  COUNT(id) AS totalCount, " +
-//            "  ROUND(AVG(age), 1) AS avgAge, " +
-//            "  ROUND(AVG(salary), 2) AS avgSalary, " +
-//            "  (SELECT COUNT(id) FROM sys_dept WHERE status = 1) AS deptCount, " +
-//            "  SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) AS onDutyCount, " +
-//            "  ROUND((SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) / COUNT(id)) * 100, 1) AS onDutyRate, " +
-//            "  SUM(salary) AS totalSalary " +
-//            "FROM employee " +
-//            "WHERE status != 3 " +
-//            "GROUP BY 1,2,3,4,5,6,7") // 加 GROUP BY 包裹所有列，兼容严格模式
-//    Map<String, Object> getEmployeeStats();
     // 替换原来的 getEmployeeStats 方法，只查询需要的原始字段
     @Select("SELECT id, age, salary, status FROM employee WHERE status != 3")
     List<Map<String, Object>> getEmployeeBaseData();
-
-    // 单独查询部门数量
-    @Select("SELECT COUNT(id) AS deptCount FROM sys_dept WHERE status = 1")
+    // 修复后写法（统计所有部门，或用你表中实际存在的状态字段）
+    @Select("SELECT COUNT(id) AS deptCount FROM sys_dept")
     Integer getDeptCount();
 }

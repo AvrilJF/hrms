@@ -14,7 +14,7 @@ public interface StatsService extends IService<Employee> {
     List<Map<String, Object>> getDeptDistribution();
     Map<String, Integer> getGenderDistribution();
     Map<String, Integer> getAgeDistribution();
-    Map<String, Integer> getStatusDistribution();
+    List<Map<String, Object>> getStatusDistribution();
     Map<String, Object> getDeptSalaryDistribution();
     Map<String, Object> getEntryLeaveTrend(String timeRange);
     Map<String, Object> getEmployeeStats(String timeRange);
