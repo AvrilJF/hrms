@@ -1,26 +1,50 @@
 spring:
-  # 数据库配置
+  # 数据库配置（保持原有内容，无需改动）
   datasource:
     url: jdbc:mysql://localhost:3306/hrms_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root  # 替换成你的MySQL用户名
     password: 123456  # 替换成你的MySQL密码
     driver-class-name: com.mysql.cj.jdbc.Driver
-  # Security配置（简化）
+  # Security配置（简化，毕设可保留）
   security:
     user:
       name: admin
       password: admin123
 
-# MyBatis-Plus配置
+# MyBatis-Plus核心配置（必须启用，解决Mapper加载/字段映射/SQL日志问题）
 mybatis-plus:
+  # Mapper XML文件路径（如果你的Mapper有自定义XML，放到resources/mapper下，无XML可保留配置）
   mapper-locations: classpath:mapper/*.xml
+  # 实体类别名包（简化XML/注解中的类名引用）
   type-aliases-package: com.example.hrms.entity
+  # 全局配置
+  global-config:
+    db-config:
+      # 逻辑删除配置（毕设常用，比如员工离职不物理删除）
+      logic-delete-field: deleted  # 全局逻辑删除字段名（实体类中对应字段）
+      logic-delete-value: 1        # 逻辑删除值（1=已删除）
+      logic-not-delete-value: 0    # 逻辑未删除值（0=正常）
+  # 配置项
   configuration:
+    # 下划线转驼峰（数据库字段如dept_name → 实体类字段deptName，必开）
     map-underscore-to-camel-case: true
+    # 打印SQL日志（毕设调试必备，能看到执行的SQL语句）
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 关闭缓存（开发阶段关闭，避免调试时数据不一致）
+    cache-enabled: false
+    # 开启自动映射（解决实体类字段与数据库字段映射问题）
+    auto-mapping-behavior: full
 
-# 服务器配置
+# 服务器配置（保持原有内容）
 server:
   port: 8080
   servlet:
     context-path: /api
+
+# 日志级别（可选，便于调试MyBatis-Plus）
+logging:
+  level:
+    # 打印Mapper接口的SQL执行日志
+    com.example.hrms.mapper: debug
+    # 打印Spring Security日志（如果需要调试权限）
+    org.springframework.security: info

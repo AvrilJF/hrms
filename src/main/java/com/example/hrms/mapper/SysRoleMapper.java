@@ -4,6 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.hrms.entity.SysRole;
 import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
+//@Mapper
 public interface SysRoleMapper extends BaseMapper<SysRole> {
 }
